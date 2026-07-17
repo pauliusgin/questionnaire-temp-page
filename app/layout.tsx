@@ -14,7 +14,7 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "Klubo administravimo anketa",
+  title: "Anketa",
   description:
     "Trumpa anketa apie tai, kaip sporto klubai tvarko lankomumą, sąskaitas ir mokėjimus.",
   manifest: "/site.webmanifest",
