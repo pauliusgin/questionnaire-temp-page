@@ -367,6 +367,16 @@ export default function Home() {
             būsimo sprendimo testavimo.
           </p>
         </div>
+        <div className="space-y-3 rounded-sm border border-line bg-surface/60 p-5 text-[13px] text-justify leading-relaxed text-muted">
+          <p className="text-xs font-semibold uppercase tracking-wider text-foreground/70">
+            Pastaba
+          </p>
+          <p>
+            Visi klausimai yra neprivalomi. Kuo daugiau informacijos
+            pasidalinsite, tuo geriau suprasiu sporto klubų administravimo
+            procesus, tačiau galite praleisti bet kurį klausimą.
+          </p>
+        </div>
       </header>
 
       {hydrated ? (
@@ -374,8 +384,7 @@ export default function Home() {
           <Question
             index={1}
             title="Trumpai apibūdinkite savo klubą"
-            hint="Kiek turite aktyvių narių, trenerių ir treniruočių grupių?"
-          >
+            hint="Kiek turite aktyvių narių, trenerių ir treniruočių grupių?">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               <NumberField
                 label="Aktyvūs nariai"
@@ -406,8 +415,7 @@ export default function Home() {
 
           <Question
             index={2}
-            title="Kaip šiuo metu registruojate ir sekate narių lankomumą?"
-          >
+            title="Kaip šiuo metu registruojate ir sekate narių lankomumą?">
             <MultiChoice
               label="Būdai"
               options={ATTENDANCE_METHODS}
@@ -424,8 +432,7 @@ export default function Home() {
 
           <Question
             index={3}
-            title="Kaip apskaičiuojate, kiek kiekvienas narys turi mokėti ir kaip išrašote sąskaitas?"
-          >
+            title="Kaip apskaičiuojate, kiek kiekvienas narys turi mokėti ir kaip išrašote sąskaitas?">
             <MultiChoice
               label="Mokesčio modelis"
               options={FEE_MODELS}
@@ -455,8 +462,7 @@ export default function Home() {
           <Question
             index={4}
             title="Kiek maždaug laiko per mėnesį skiriate administravimui?"
-            hint="Lankomumas, sąskaitos, mokėjimų tikrinimas."
-          >
+            hint="Lankomumas, sąskaitos, mokėjimų tikrinimas.">
             <div className="grid gap-4 sm:max-w-[16rem]">
               <NumberField
                 label="Valandų per mėnesį"
@@ -476,8 +482,7 @@ export default function Home() {
           <Question
             index={5}
             title="Ar naudojate kokią nors programinę įrangą klubui administruoti?"
-            hint="Lankomumas, sąskaitos, mokėjimai. Ir kodėl pasirinkote būtent jas?"
-          >
+            hint="Lankomumas, sąskaitos, mokėjimai. Ir kodėl pasirinkote būtent jas?">
             <TextAreaField
               value={form.toolsUsed}
               onChange={(value) => update("toolsUsed", value)}
@@ -488,8 +493,7 @@ export default function Home() {
 
           <Question
             index={6}
-            title="Kas jūsų dabartiniuose procesuose veikia gerai - kas jums patinka?"
-          >
+            title="Kas jūsų dabartiniuose procesuose veikia gerai - kas jums patinka?">
             <TextAreaField
               value={form.worksWell}
               onChange={(value) => update("worksWell", value)}
@@ -499,8 +503,7 @@ export default function Home() {
 
           <Question
             index={7}
-            title="Kas šiame procese nepatogiausia ar atima daugiausiai laiko?"
-          >
+            title="Kas šiame procese nepatogiausia ar atima daugiausiai laiko?">
             <TextAreaField
               value={form.mostInconvenient}
               onChange={(value) => update("mostInconvenient", value)}
@@ -510,8 +513,7 @@ export default function Home() {
 
           <Question
             index={8}
-            title="Kur dažniausiai pasitaiko klaidų arba kur tenka kartoti tuos pačius rankinius veiksmus?"
-          >
+            title="Kur dažniausiai pasitaiko klaidų arba kur tenka kartoti tuos pačius rankinius veiksmus?">
             <MultiChoice
               label="Probleminės vietos"
               options={ERROR_AREAS}
@@ -529,8 +531,7 @@ export default function Home() {
           <Question
             index={9}
             title="Jei galėtumėte automatizuoti vieną administravimo dalį, kuri tai būtų?"
-            hint="Ir kodėl būtent ji?"
-          >
+            hint="Ir kodėl būtent ji?">
             <TextAreaField
               value={form.automateOne}
               onChange={(value) => update("automateOne", value)}
@@ -540,8 +541,7 @@ export default function Home() {
 
           <Question
             index={10}
-            title="Ar yra dar kas nors svarbaus, ką vertėtų žinoti apie jūsų klubo administravimą?"
-          >
+            title="Ar yra dar kas nors svarbaus, ką vertėtų žinoti apie jūsų klubo administravimą?">
             <TextAreaField
               value={form.anythingElse}
               onChange={(value) => update("anythingElse", value)}
@@ -601,8 +601,7 @@ export default function Home() {
             <button
               type="submit"
               disabled={status === "sending"}
-              className="rounded-sm bg-accent px-6 py-2.5 text-sm tracking-wide text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
+              className="rounded-sm bg-accent px-6 py-2.5 text-sm tracking-wide text-white transition-opacity hover:opacity-90 disabled:opacity-50">
               {status === "sending" ? "Siunčiama…" : "Pateikti atsakymus"}
             </button>
             {status === "error" ? (
