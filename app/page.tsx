@@ -1,6 +1,11 @@
 "use client";
 
-import { SyntheticEvent, useState } from "react";
+import {
+  SyntheticEvent,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import {
@@ -112,6 +117,61 @@ const INITIAL_STATE: FormState = {
 
 type Status = "idle" | "sending" | "sent" | "error";
 
+const STORAGE_KEY = "anketa-form";
+
+// Merge stored values onto INITIAL_STATE so new fields keep their defaults even
+// if an older payload is missing them. Arrays must stay arrays.
+const parseStoredForm = (raw: string): FormState | null => {
+  try {
+    const parsed = JSON.parse(raw) as Partial<FormState>;
+    if (typeof parsed !== "object" || parsed === null) {
+      return null;
+    }
+    const merged = { ...INITIAL_STATE };
+    for (const key of Object.keys(INITIAL_STATE) as (keyof FormState)[]) {
+      const stored = parsed[key];
+      const initial = INITIAL_STATE[key];
+      if (Array.isArray(initial)) {
+        if (Array.isArray(stored)) {
+          (merged[key] as string[]) = stored as string[];
+        }
+        continue;
+      }
+      if (typeof stored === "string") {
+        (merged[key] as string) = stored;
+      }
+    }
+    return merged;
+  } catch {
+    return null;
+  }
+};
+
+// Read the saved draft during render (client only). Runs as the useState
+// initializer so there is no setState inside an effect.
+const readStoredForm = (): FormState => {
+  if (typeof window === "undefined") {
+    return INITIAL_STATE;
+  }
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+  if (raw === null) {
+    return INITIAL_STATE;
+  }
+  return parseStoredForm(raw) ?? INITIAL_STATE;
+};
+
+// False on the server and during the first client render, true afterwards —
+// without a setState-in-effect. Lets us defer the localStorage-driven form to
+// the client so the initial markup matches on both sides (no hydration
+// mismatch).
+const emptySubscribe = () => () => {};
+const useHydrated = () =>
+  useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+
 const toNumberOrNull = (value: string) => {
   if (value?.trim() === "") {
     return null;
@@ -127,9 +187,16 @@ const toTextOrNull = (value: string) => {
 };
 
 export default function Home() {
-  const [form, setForm] = useState<FormState>(INITIAL_STATE);
+  const [form, setForm] = useState<FormState>(readStoredForm);
   const [status, setStatus] = useState<Status>("idle");
   const [emptyWarning, setEmptyWarning] = useState(false);
+  const hydrated = useHydrated();
+
+  // `form` already holds the saved draft from the initializer, so the first
+  // client write is a harmless no-op; later edits keep the draft in sync.
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+  }, [form]);
 
   const update = <Key extends keyof FormState>(
     key: Key,
@@ -210,6 +277,9 @@ export default function Home() {
         });
       }
 
+      // Only wipe the saved draft once the submission actually succeeded.
+      window.localStorage.removeItem(STORAGE_KEY);
+      setForm(INITIAL_STATE);
       setStatus("sent");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
@@ -299,242 +369,255 @@ export default function Home() {
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="space-y-10">
-        <Question
-          index={1}
-          title="Trumpai apibūdinkite savo klubą"
-          hint="Kiek turite aktyvių narių, trenerių ir treniruočių grupių?">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <NumberField
-              label="Aktyvūs nariai"
-              value={form.activeMembers}
-              onChange={(value) => update("activeMembers", value)}
-              placeholder="0"
-            />
-            <NumberField
-              label="Treneriai"
-              value={form.coaches}
-              onChange={(value) => update("coaches", value)}
-              placeholder="0"
-            />
-            <NumberField
-              label="Treniruočių grupės"
-              value={form.trainingGroups}
-              onChange={(value) => update("trainingGroups", value)}
-              placeholder="0"
-            />
-          </div>
-          <TextAreaField
-            label="Savais žodžiais"
-            value={form.clubDescription}
-            onChange={(value) => update("clubDescription", value)}
-            placeholder="Sporto šaka, amžiaus grupė, kiek laiko klubas veikia, ką dar svarbu žinoti."
-          />
-        </Question>
-
-        <Question
-          index={2}
-          title="Kaip šiuo metu registruojate ir sekate narių lankomumą?">
-          <MultiChoice
-            label="Būdai"
-            options={ATTENDANCE_METHODS}
-            values={form.attendanceMethods}
-            onChange={(values) => update("attendanceMethods", values)}
-          />
-          <TextAreaField
-            label="Kaip tai vyksta praktiškai"
-            value={form.attendanceDetails}
-            onChange={(value) => update("attendanceDetails", value)}
-            placeholder="Kas žymi lankomumą, kada, ir kas su tais duomenimis vyksta vėliau?"
-          />
-        </Question>
-
-        <Question
-          index={3}
-          title="Kaip apskaičiuojate, kiek kiekvienas narys turi mokėti ir kaip išrašote sąskaitas?">
-          <MultiChoice
-            label="Mokesčio modelis"
-            options={FEE_MODELS}
-            values={form.feeModel}
-            onChange={(value) => update("feeModel", value)}
-          />
-          <MultiChoice
-            label="Sąskaitų išrašymas"
-            options={INVOICING_METHODS}
-            values={form.invoicingMethods}
-            onChange={(values) => update("invoicingMethods", values)}
-          />
-          <MultiChoice
-            label="Apmokėjimo būdai"
-            options={PAYMENT_METHODS}
-            values={form.paymentMethods}
-            onChange={(values) => update("paymentMethods", values)}
-          />
-          <TextAreaField
-            label="Papasakokite plačiau"
-            value={form.feeDetails}
-            onChange={(value) => update("feeDetails", value)}
-            placeholder="Nuolaidos, sustabdytos narystės, praleistos treniruotės - įdomiausia būtent išimtys ir sunkumai"
-          />
-        </Question>
-
-        <Question
-          index={4}
-          title="Kiek maždaug laiko per mėnesį skiriate administravimui?"
-          hint="Lankomumas, sąskaitos, mokėjimų tikrinimas.">
-          <div className="grid gap-4 sm:max-w-[16rem]">
-            <NumberField
-              label="Valandų per mėnesį"
-              value={form.adminHoursPerMonth}
-              onChange={(value) => update("adminHoursPerMonth", value)}
-              placeholder="0"
-            />
-          </div>
-          <MultiChoice
-            label="Kas tai atlieka"
-            options={ADMIN_OWNERS}
-            values={form.adminOwner}
-            onChange={(value) => update("adminOwner", value)}
-          />
-        </Question>
-
-        <Question
-          index={5}
-          title="Ar naudojate kokią nors programinę įrangą klubui administruoti?"
-          hint="Lankomumas, sąskaitos, mokėjimai. Ir kodėl pasirinkote būtent jas?">
-          <TextAreaField
-            value={form.toolsUsed}
-            onChange={(value) => update("toolsUsed", value)}
-            placeholder="Priemonių pavadinimai ir kas nulėmė pasirinkimą - kaina, rekomendacija, ar tiesiog jau buvo naudojama?"
-            rows={5}
-          />
-        </Question>
-
-        <Question
-          index={6}
-          title="Kas jūsų dabartiniuose procesuose veikia gerai - kas jums patinka?">
-          <TextAreaField
-            value={form.worksWell}
-            onChange={(value) => update("worksWell", value)}
-            placeholder="Tai, ko nenorėtumėte prarasti."
-          />
-        </Question>
-
-        <Question
-          index={7}
-          title="Kas šiame procese nepatogiausia ar atima daugiausiai laiko?">
-          <TextAreaField
-            value={form.mostInconvenient}
-            onChange={(value) => update("mostInconvenient", value)}
-            placeholder="Ta dalis, kurią vis atidėliojate..."
-          />
-        </Question>
-
-        <Question
-          index={8}
-          title="Kur dažniausiai pasitaiko klaidų arba kur tenka kartoti tuos pačius rankinius veiksmus?">
-          <MultiChoice
-            label="Probleminės vietos"
-            options={ERROR_AREAS}
-            values={form.errorAreas}
-            onChange={(values) => update("errorAreas", values)}
-          />
-          <TextAreaField
-            label="Pavyzdys, jei toks ateina į galvą"
-            value={form.errorDetails}
-            onChange={(value) => update("errorDetails", value)}
-            placeholder="Kas nutiko ne taip ir kaip tai pastebėjote?"
-          />
-        </Question>
-
-        <Question
-          index={9}
-          title="Jei galėtumėte automatizuoti vieną administravimo dalį, kuri tai būtų?"
-          hint="Ir kodėl būtent ji?">
-          <TextAreaField
-            value={form.automateOne}
-            onChange={(value) => update("automateOne", value)}
-            placeholder="Vienas dalykas. Tai, kuris sugrąžintų daugiausiai laiko ar ramybės."
-          />
-        </Question>
-
-        <Question
-          index={10}
-          title="Ar yra dar kas nors svarbaus, ką vertėtų žinoti apie jūsų klubo administravimą?">
-          <TextAreaField
-            value={form.anythingElse}
-            onChange={(value) => update("anythingElse", value)}
-            placeholder="Viskas, ko nepaklausėme aukščiau."
-          />
-        </Question>
-
-        <section className="border-t border-line pt-8">
-          <div className="flex gap-4">
-            <span className="mt-1 font-serif text-sm text-muted">•</span>
-            <div className="flex-1 space-y-4">
-              <div className="space-y-1.5">
-                <h2 className="font-serif text-xl leading-snug">
-                  Palikite būdą su jumis susisiekti
-                </h2>
-                <p className="text-sm text-muted">
-                  Nebūtina. Jei projektas virs produktu, pirmiausia pakviesiu jį
-                  išbandyti šios apklausos dalyvius. Taip pat galiu susisiekti
-                  atsiradus papildomų klausimų
-                </p>
-              </div>
-              <TextField
-                label="El. paštas"
-                type="email"
-                value={form.contactEmail}
-                onChange={(value) => update("contactEmail", value)}
+      {hydrated ? (
+        <form onSubmit={handleSubmit} className="space-y-10">
+          <Question
+            index={1}
+            title="Trumpai apibūdinkite savo klubą"
+            hint="Kiek turite aktyvių narių, trenerių ir treniruočių grupių?"
+          >
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <NumberField
+                label="Aktyvūs nariai"
+                value={form.activeMembers}
+                onChange={(value) => update("activeMembers", value)}
+                placeholder="0"
+              />
+              <NumberField
+                label="Treneriai"
+                value={form.coaches}
+                onChange={(value) => update("coaches", value)}
+                placeholder="0"
+              />
+              <NumberField
+                label="Treniruočių grupės"
+                value={form.trainingGroups}
+                onChange={(value) => update("trainingGroups", value)}
+                placeholder="0"
               />
             </div>
-          </div>
-        </section>
+            <TextAreaField
+              label="Savais žodžiais"
+              value={form.clubDescription}
+              onChange={(value) => update("clubDescription", value)}
+              placeholder="Sporto šaka, amžiaus grupė, kiek laiko klubas veikia, ką dar svarbu žinoti."
+            />
+          </Question>
 
-        <section className="border-t border-line pt-8">
-          <div className="flex gap-4">
-            <span className="mt-1 font-serif text-sm text-muted">•</span>
-            <div className="flex-1 space-y-4">
-              <div className="space-y-1.5">
-                <h2 className="font-serif text-xl leading-snug">
-                  Ar žinote kitų klubų, kuriems tai galėtų būti aktualu?
-                </h2>
-                <p className="text-sm text-muted">
-                  Nebūtina. Jei pažįstate kitų klubų, kurie susiduria su
-                  panašiais administravimo iššūkiais ir kuriems galbūt praverstų
-                  patogesni procesai, palikite jų pavadinimą ar bet kokią
-                  kontaktinę informaciją - mielai su jais susisiekčiau.
-                </p>
-              </div>
-              <TextAreaField
-                value={form.referrals}
-                onChange={(value) => update("referrals", value)}
-                placeholder="Klubo pavadinimas, žmogaus vardas, el. paštas ar telefonas"
+          <Question
+            index={2}
+            title="Kaip šiuo metu registruojate ir sekate narių lankomumą?"
+          >
+            <MultiChoice
+              label="Būdai"
+              options={ATTENDANCE_METHODS}
+              values={form.attendanceMethods}
+              onChange={(values) => update("attendanceMethods", values)}
+            />
+            <TextAreaField
+              label="Kaip tai vyksta praktiškai"
+              value={form.attendanceDetails}
+              onChange={(value) => update("attendanceDetails", value)}
+              placeholder="Kas žymi lankomumą, kada, ir kas su tais duomenimis vyksta vėliau?"
+            />
+          </Question>
+
+          <Question
+            index={3}
+            title="Kaip apskaičiuojate, kiek kiekvienas narys turi mokėti ir kaip išrašote sąskaitas?"
+          >
+            <MultiChoice
+              label="Mokesčio modelis"
+              options={FEE_MODELS}
+              values={form.feeModel}
+              onChange={(value) => update("feeModel", value)}
+            />
+            <MultiChoice
+              label="Sąskaitų išrašymas"
+              options={INVOICING_METHODS}
+              values={form.invoicingMethods}
+              onChange={(values) => update("invoicingMethods", values)}
+            />
+            <MultiChoice
+              label="Apmokėjimo būdai"
+              options={PAYMENT_METHODS}
+              values={form.paymentMethods}
+              onChange={(values) => update("paymentMethods", values)}
+            />
+            <TextAreaField
+              label="Papasakokite plačiau"
+              value={form.feeDetails}
+              onChange={(value) => update("feeDetails", value)}
+              placeholder="Nuolaidos, sustabdytos narystės, praleistos treniruotės - įdomiausia būtent išimtys ir sunkumai"
+            />
+          </Question>
+
+          <Question
+            index={4}
+            title="Kiek maždaug laiko per mėnesį skiriate administravimui?"
+            hint="Lankomumas, sąskaitos, mokėjimų tikrinimas."
+          >
+            <div className="grid gap-4 sm:max-w-[16rem]">
+              <NumberField
+                label="Valandų per mėnesį"
+                value={form.adminHoursPerMonth}
+                onChange={(value) => update("adminHoursPerMonth", value)}
+                placeholder="0"
               />
             </div>
-          </div>
-        </section>
+            <MultiChoice
+              label="Kas tai atlieka"
+              options={ADMIN_OWNERS}
+              values={form.adminOwner}
+              onChange={(value) => update("adminOwner", value)}
+            />
+          </Question>
 
-        <div className="flex flex-wrap items-center gap-4 border-t border-line pt-8">
-          <button
-            type="submit"
-            disabled={status === "sending"}
-            className="rounded-sm bg-accent px-6 py-2.5 text-sm tracking-wide text-white transition-opacity hover:opacity-90 disabled:opacity-50">
-            {status === "sending" ? "Siunčiama…" : "Pateikti atsakymus"}
-          </button>
-          {status === "error" ? (
-            <p className="text-sm text-red-800">
-              Siunčiant įvyko klaida. Bandykite dar kartą.
-            </p>
-          ) : null}
-          {emptyWarning ? (
-            <p className="text-sm text-red-800">
-              Atsakykite į bent vieną klausimą
-            </p>
-          ) : null}
-        </div>
-      </form>
+          <Question
+            index={5}
+            title="Ar naudojate kokią nors programinę įrangą klubui administruoti?"
+            hint="Lankomumas, sąskaitos, mokėjimai. Ir kodėl pasirinkote būtent jas?"
+          >
+            <TextAreaField
+              value={form.toolsUsed}
+              onChange={(value) => update("toolsUsed", value)}
+              placeholder="Priemonių pavadinimai ir kas nulėmė pasirinkimą - kaina, rekomendacija, ar tiesiog jau buvo naudojama?"
+              rows={5}
+            />
+          </Question>
+
+          <Question
+            index={6}
+            title="Kas jūsų dabartiniuose procesuose veikia gerai - kas jums patinka?"
+          >
+            <TextAreaField
+              value={form.worksWell}
+              onChange={(value) => update("worksWell", value)}
+              placeholder="Tai, ko nenorėtumėte prarasti."
+            />
+          </Question>
+
+          <Question
+            index={7}
+            title="Kas šiame procese nepatogiausia ar atima daugiausiai laiko?"
+          >
+            <TextAreaField
+              value={form.mostInconvenient}
+              onChange={(value) => update("mostInconvenient", value)}
+              placeholder="Ta dalis, kurią vis atidėliojate..."
+            />
+          </Question>
+
+          <Question
+            index={8}
+            title="Kur dažniausiai pasitaiko klaidų arba kur tenka kartoti tuos pačius rankinius veiksmus?"
+          >
+            <MultiChoice
+              label="Probleminės vietos"
+              options={ERROR_AREAS}
+              values={form.errorAreas}
+              onChange={(values) => update("errorAreas", values)}
+            />
+            <TextAreaField
+              label="Pavyzdys, jei toks ateina į galvą"
+              value={form.errorDetails}
+              onChange={(value) => update("errorDetails", value)}
+              placeholder="Kas nutiko ne taip ir kaip tai pastebėjote?"
+            />
+          </Question>
+
+          <Question
+            index={9}
+            title="Jei galėtumėte automatizuoti vieną administravimo dalį, kuri tai būtų?"
+            hint="Ir kodėl būtent ji?"
+          >
+            <TextAreaField
+              value={form.automateOne}
+              onChange={(value) => update("automateOne", value)}
+              placeholder="Vienas dalykas. Tai, kuris sugrąžintų daugiausiai laiko ar ramybės."
+            />
+          </Question>
+
+          <Question
+            index={10}
+            title="Ar yra dar kas nors svarbaus, ką vertėtų žinoti apie jūsų klubo administravimą?"
+          >
+            <TextAreaField
+              value={form.anythingElse}
+              onChange={(value) => update("anythingElse", value)}
+              placeholder="Viskas, ko nepaklausėme aukščiau."
+            />
+          </Question>
+
+          <section className="border-t border-line pt-8">
+            <div className="flex gap-4">
+              <span className="mt-1 font-serif text-sm text-muted">•</span>
+              <div className="flex-1 space-y-4">
+                <div className="space-y-1.5">
+                  <h2 className="font-serif text-xl leading-snug">
+                    Palikite būdą su jumis susisiekti
+                  </h2>
+                  <p className="text-sm text-muted">
+                    Nebūtina. Jei projektas virs produktu, pirmiausia pakviesiu
+                    jį išbandyti šios apklausos dalyvius. Taip pat galiu
+                    susisiekti atsiradus papildomų klausimų
+                  </p>
+                </div>
+                <TextField
+                  label="El. paštas"
+                  type="email"
+                  value={form.contactEmail}
+                  onChange={(value) => update("contactEmail", value)}
+                />
+              </div>
+            </div>
+          </section>
+
+          <section className="border-t border-line pt-8">
+            <div className="flex gap-4">
+              <span className="mt-1 font-serif text-sm text-muted">•</span>
+              <div className="flex-1 space-y-4">
+                <div className="space-y-1.5">
+                  <h2 className="font-serif text-xl leading-snug">
+                    Ar žinote kitų klubų, kuriems tai galėtų būti aktualu?
+                  </h2>
+                  <p className="text-sm text-muted">
+                    Nebūtina. Jei pažįstate kitų klubų, kurie susiduria su
+                    panašiais administravimo iššūkiais ir kuriems galbūt
+                    praverstų patogesni procesai, palikite jų pavadinimą ar bet
+                    kokią kontaktinę informaciją - mielai su jais susisiekčiau.
+                  </p>
+                </div>
+                <TextAreaField
+                  value={form.referrals}
+                  onChange={(value) => update("referrals", value)}
+                  placeholder="Klubo pavadinimas, žmogaus vardas, el. paštas ar telefonas"
+                />
+              </div>
+            </div>
+          </section>
+
+          <div className="flex flex-wrap items-center gap-4 border-t border-line pt-8">
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="rounded-sm bg-accent px-6 py-2.5 text-sm tracking-wide text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              {status === "sending" ? "Siunčiama…" : "Pateikti atsakymus"}
+            </button>
+            {status === "error" ? (
+              <p className="text-sm text-red-800">
+                Siunčiant įvyko klaida. Bandykite dar kartą.
+              </p>
+            ) : null}
+            {emptyWarning ? (
+              <p className="text-sm text-red-800">
+                Atsakykite į bent vieną klausimą
+              </p>
+            ) : null}
+          </div>
+        </form>
+      ) : null}
     </main>
   );
 }
