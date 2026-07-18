@@ -1,0 +1,171 @@
+[debug] [2026-07-18T08:21:57.684Z] ----------------------------------------------------------------------
+[debug] [2026-07-18T08:21:57.686Z] Command:       /opt/homebrew/Cellar/node/26.5.0/bin/node /opt/homebrew/bin/firebase deploy --only functions
+[debug] [2026-07-18T08:21:57.686Z] CLI Version:   15.24.0
+[debug] [2026-07-18T08:21:57.686Z] Platform:      darwin
+[debug] [2026-07-18T08:21:57.686Z] Node Version:  v26.5.0
+[debug] [2026-07-18T08:21:57.686Z] Detected Agent: unknown
+[debug] [2026-07-18T08:21:57.686Z] Time:          Sat Jul 18 2026 11:21:57 GMT+0300 (Eastern European Summer Time)
+[debug] [2026-07-18T08:21:57.686Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-18T08:21:58.150Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-18T08:21:58.151Z] > authorizing via signed-in user (paulius000@gmail.com)
+[debug] [2026-07-18T08:21:58.151Z] [iam] checking project anketa-4cdeb for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-07-18T08:21:58.155Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:21:58.155Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:21:58.155Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions [none]
+[debug] [2026-07-18T08:21:58.156Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:21:58.156Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-18T08:21:59.039Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions 200
+[debug] [2026-07-18T08:21:59.040Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-07-18T08:21:59.040Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:21:59.040Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:21:59.040Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/anketa-4cdeb/serviceAccounts/anketa-4cdeb@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-07-18T08:21:59.040Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/anketa-4cdeb/serviceAccounts/anketa-4cdeb@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2026-07-18T08:21:59.944Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/anketa-4cdeb/serviceAccounts/anketa-4cdeb@appspot.gserviceaccount.com:testIamPermissions 404
+[debug] [2026-07-18T08:21:59.944Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/anketa-4cdeb/serviceAccounts/anketa-4cdeb@appspot.gserviceaccount.com:testIamPermissions {"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}}
+[debug] [2026-07-18T08:21:59.945Z] [functions] service account IAM check errored, deploy may fail: Request to https://iam.googleapis.com/v1/projects/anketa-4cdeb/serviceAccounts/anketa-4cdeb@appspot.gserviceaccount.com:testIamPermissions had HTTP Error: 404, Unknown service account {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}},"response":{"statusCode":404}},"exit":1,"message":"Request to https://iam.googleapis.com/v1/projects/anketa-4cdeb/serviceAccounts/anketa-4cdeb@appspot.gserviceaccount.com:testIamPermissions had HTTP Error: 404, Unknown service account","status":404}
+[info] 
+[info] === Deploying to 'anketa-4cdeb'...
+[info] 
+[info] i  deploying functions 
+[debug] [2026-07-18T08:21:59.949Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:21:59.949Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:21:59.949Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb [none]
+[debug] [2026-07-18T08:22:00.137Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb 200
+[debug] [2026-07-18T08:22:00.137Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb {"projectNumber":"733971126744","projectId":"anketa-4cdeb","lifecycleState":"ACTIVE","name":"anketa","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-07-17T12:11:57.913Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2026-07-18T08:22:00.138Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:00.138Z] Checked if tokens are valid: true, expires at: 1784365957960
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2026-07-18T08:22:00.138Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:00.138Z] Checked if tokens are valid: true, expires at: 1784365957960
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2026-07-18T08:22:00.139Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:00.139Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:00.139Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/runtimeconfig.googleapis.com [none]
+[debug] [2026-07-18T08:22:00.139Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/runtimeconfig.googleapis.com  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:22:00.140Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/cloudbuild.googleapis.com [none]
+[debug] [2026-07-18T08:22:00.140Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/cloudbuild.googleapis.com  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:22:00.141Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/artifactregistry.googleapis.com [none]
+[debug] [2026-07-18T08:22:00.141Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/artifactregistry.googleapis.com  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:22:01.289Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/runtimeconfig.googleapis.com 200
+[debug] [2026-07-18T08:22:01.289Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2026-07-18T08:22:01.300Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/cloudbuild.googleapis.com 200
+[debug] [2026-07-18T08:22:01.300Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/cloudbuild.googleapis.com [omitted]
+[warn] ⚠  functions: missing required API cloudbuild.googleapis.com. Enabling now... 
+[debug] [2026-07-18T08:22:01.301Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:01.301Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:01.302Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/cloudbuild.googleapis.com:enable [none]
+[debug] [2026-07-18T08:22:01.302Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/cloudbuild.googleapis.com:enable  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:22:01.303Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/artifactregistry.googleapis.com 200
+[debug] [2026-07-18T08:22:01.303Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/artifactregistry.googleapis.com [omitted]
+[warn] ⚠  artifactregistry: missing required API artifactregistry.googleapis.com. Enabling now... 
+[debug] [2026-07-18T08:22:01.304Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:01.304Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:01.304Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/artifactregistry.googleapis.com:enable [none]
+[debug] [2026-07-18T08:22:01.304Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/artifactregistry.googleapis.com:enable  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:22:02.616Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/artifactregistry.googleapis.com:enable 200
+[debug] [2026-07-18T08:22:02.617Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/artifactregistry.googleapis.com:enable [omitted]
+[debug] [2026-07-18T08:22:02.988Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/cloudbuild.googleapis.com:enable 200
+[debug] [2026-07-18T08:22:02.988Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/cloudbuild.googleapis.com:enable [omitted]
+[debug] [2026-07-18T08:22:12.997Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:12.997Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:12.997Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/anketa-4cdeb/adminSdkConfig [none]
+[debug] [2026-07-18T08:22:13.474Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/anketa-4cdeb/adminSdkConfig 200
+[debug] [2026-07-18T08:22:13.474Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/anketa-4cdeb/adminSdkConfig {"projectId":"anketa-4cdeb","storageBucket":"anketa-4cdeb.firebasestorage.app"}
+[debug] [2026-07-18T08:22:13.475Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:13.475Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:13.475Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/anketa-4cdeb/configs [none]
+[debug] [2026-07-18T08:22:13.788Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/anketa-4cdeb/configs 200
+[debug] [2026-07-18T08:22:13.788Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/anketa-4cdeb/configs {}
+[debug] [2026-07-18T08:22:13.790Z] Validating nodejs source
+[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] ⚠  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2026-07-18T08:22:14.280Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for anketa",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "firebase-admin": "^13.6.0",
+    "firebase-functions": "^6.5.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0"
+  },
+  "private": true
+}
+[debug] [2026-07-18T08:22:14.280Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[debug] [2026-07-18T08:22:14.281Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-07-18T08:22:14.284Z] Found firebase-functions binary at '/Users/paulius/Coding/personal_projects/web apps/project_x_anketa/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8147
+
+[debug] [2026-07-18T08:22:14.670Z] Got response from /__/functions.yaml {"endpoints":{"notifyOnResponse":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"secretEnvironmentVariables":[{"key":"DISCORD_WEBHOOK_URL"}],"labels":{},"eventTrigger":{"eventType":"google.cloud.firestore.document.v1.created","eventFilters":{"database":"default","namespace":"(default)"},"eventFilterPathPatterns":{"document":"responses/{responseId}"},"retry":false},"entryPoint":"notifyOnResponse"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{},"params":[{"type":"secret","name":"DISCORD_WEBHOOK_URL"}]}
+[debug] [2026-07-18T08:22:17.683Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:17.683Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:17.683Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/anketa-4cdeb/locations/-/functions [none]
+[debug] [2026-07-18T08:22:18.389Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/anketa-4cdeb/locations/-/functions 200
+[debug] [2026-07-18T08:22:18.389Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/anketa-4cdeb/locations/-/functions {}
+[debug] [2026-07-18T08:22:18.390Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:18.390Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:18.390Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/anketa-4cdeb/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2026-07-18T08:22:19.512Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/anketa-4cdeb/locations/-/functions 200
+[debug] [2026-07-18T08:22:19.512Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/anketa-4cdeb/locations/-/functions {}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2026-07-18T08:22:19.514Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:19.514Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:19.515Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/firebaseextensions.googleapis.com [none]
+[debug] [2026-07-18T08:22:19.515Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/firebaseextensions.googleapis.com  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:22:20.536Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/firebaseextensions.googleapis.com 200
+[debug] [2026-07-18T08:22:20.536Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/firebaseextensions.googleapis.com [omitted]
+[warn] ⚠  extensions: missing required API firebaseextensions.googleapis.com. Enabling now... 
+[debug] [2026-07-18T08:22:20.536Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:20.536Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:20.536Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/firebaseextensions.googleapis.com:enable [none]
+[debug] [2026-07-18T08:22:20.536Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/firebaseextensions.googleapis.com:enable  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:22:21.258Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/firebaseextensions.googleapis.com:enable 200
+[debug] [2026-07-18T08:22:21.258Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/anketa-4cdeb/services/firebaseextensions.googleapis.com:enable [omitted]
+[debug] [2026-07-18T08:22:31.271Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-18T08:22:31.272Z] > authorizing via signed-in user (paulius000@gmail.com)
+[debug] [2026-07-18T08:22:31.272Z] [iam] checking project anketa-4cdeb for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2026-07-18T08:22:31.272Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:31.272Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:31.273Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions [none]
+[debug] [2026-07-18T08:22:31.273Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions  x-goog-user-project=anketa-4cdeb
+[debug] [2026-07-18T08:22:31.273Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2026-07-18T08:22:32.107Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions 200
+[debug] [2026-07-18T08:22:32.107Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/anketa-4cdeb:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2026-07-18T08:22:32.108Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:32.108Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:32.108Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/anketa-4cdeb/instances pageSize=100&pageToken=
+[debug] [2026-07-18T08:22:34.360Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/anketa-4cdeb/instances 200
+[debug] [2026-07-18T08:22:34.360Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/anketa-4cdeb/instances {}
+[debug] [2026-07-18T08:22:34.361Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:34.361Z] Checked if tokens are valid: true, expires at: 1784365957960
+[debug] [2026-07-18T08:22:34.361Z] >>> [apiv2][query] GET https://secretmanager.googleapis.com/v1/projects/anketa-4cdeb/secrets/DISCORD_WEBHOOK_URL [none]
+[debug] [2026-07-18T08:22:34.641Z] <<< [apiv2][status] GET https://secretmanager.googleapis.com/v1/projects/anketa-4cdeb/secrets/DISCORD_WEBHOOK_URL 404
+[debug] [2026-07-18T08:22:34.641Z] <<< [apiv2][body] GET https://secretmanager.googleapis.com/v1/projects/anketa-4cdeb/secrets/DISCORD_WEBHOOK_URL {"error":{"code":404,"message":"Secret [projects/733971126744/secrets/DISCORD_WEBHOOK_URL] not found.","status":"NOT_FOUND"}}
+[debug] [2026-07-18T08:23:33.114Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (/opt/homebrew/Cellar/firebase-cli/15.24.0/libexec/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:101:37)
+    at Interface.emit (node:events:509:20)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1327:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:284:20)
+    at ReadStream.emit (node:events:521:24)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+    at ReadStream.emit (node:events:509:20)
+    at addChunk (node:internal/streams/readable:568:12)
+[error] 
+[error] Error: An unexpected error has occurred.
